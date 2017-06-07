@@ -29,6 +29,6 @@ public class Tuple2<T1, T2> {
     }
 
     public static <U1, U2> Tuple2<U1, U2> create(U1 item1, U2 item2){
-        return new Tuple2<U1, U2>(item1, item2);
+        return new Tuple2<>(item1, item2);
     }
 }

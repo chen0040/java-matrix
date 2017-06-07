@@ -505,16 +505,6 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>${commons-math.version}</version>
-        </dependency>
-
-
-
-
-
     </dependencies>
 
 </project>
