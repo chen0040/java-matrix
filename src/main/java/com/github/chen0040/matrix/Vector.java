@@ -15,15 +15,7 @@ public class Vector implements Serializable, Cloneable {
     private int dimension;
     private int id = -1;
 
-    public Vector(){
 
-    }
-
-    public Vector(double[] v){
-        for(int i=0; i < v.length; ++i){
-            set(i, v[i]);
-        }
-    }
 
     public Vector(int dimension){
         this.dimension = dimension;
@@ -55,15 +47,17 @@ public class Vector implements Serializable, Cloneable {
     }
 
     public void set(int i, double value){
+        if(i >= dimension){
+            throw new RuntimeException("dimension exceeded at index " + i + ", given dimension is only " + dimension);
+        }
+
         if(DoubleUtils.isZero(value)){
             data.remove(i);
             return;
         }
 
         data.put(i, value);
-        if(i >= dimension){
-            dimension = i+1;
-        }
+
     }
 
     public int getId(){

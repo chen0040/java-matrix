@@ -57,7 +57,7 @@ public class CholeskyFactorization {
             L.set(i, i, l_11);
 
             // L_{21} = A_{21} / l_{11}
-            Vector L_21 = new Vector();
+            Vector L_21 = new Vector(n);
             L_21.setId(i);
             for (int j = i + 1; j < n; ++j)
             {
