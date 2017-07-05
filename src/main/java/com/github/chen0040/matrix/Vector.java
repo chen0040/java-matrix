@@ -121,12 +121,12 @@ public class Vector implements Serializable, Cloneable {
         for(int i = 0; i < vlist.size(); ++i)
         {
             Vector v = vlist.get(i);
-            double norm_a = Math.sqrt(v.multiply(v));
+            double norm_a = v.multiply(v);
 
             if (DoubleUtils.isZero(norm_a)) {
                 return new Vector(dimension);
             }
-            double sigma = multiply(v) / norm_a;
+            double sigma = b.multiply(v) / norm_a;
             Vector v_parallel = v.multiply(sigma);
 
             alpha.put(i, sigma);
@@ -139,7 +139,7 @@ public class Vector implements Serializable, Cloneable {
 
     public Vector projectAlong(Vector rhs)
     {
-        double norm_a = Math.sqrt(rhs.multiply(rhs));
+        double norm_a = rhs.multiply(rhs);
 
         if (DoubleUtils.isZero(norm_a)) {
             return new Vector(dimension);
