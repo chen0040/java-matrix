@@ -97,57 +97,6 @@ public class Vector implements Serializable, Cloneable {
         return false;
     }
 
-    public IndexValue indexWithMaxValue(Set<Integer> indices){
-        if(indices == null){
-            return indexWithMaxValue();
-        }else{
-            IndexValue iv = new IndexValue();
-            iv.setIndex(-1);
-            iv.setValue(Double.NEGATIVE_INFINITY);
-            for(Integer index : indices){
-                double value = data.getOrDefault(index, Double.NEGATIVE_INFINITY);
-                if(value > iv.getValue()){
-                    iv.setIndex(index);
-                    iv.setValue(value);
-                }
-            }
-            return iv;
-        }
-    }
-
-    public IndexValue indexWithMaxValue(){
-        IndexValue iv = new IndexValue();
-        iv.setIndex(-1);
-        iv.setValue(Double.NEGATIVE_INFINITY);
-
-
-        for(Map.Entry<Integer, Double> entry : data.entrySet()){
-            if(entry.getKey() >= dimension) continue;
-
-            double value = entry.getValue();
-            if(value > iv.getValue()){
-                iv.setValue(value);
-                iv.setIndex(entry.getKey());
-            }
-        }
-
-        if(!iv.hasValue()){
-            iv.setValue(0);
-        } else{
-            if(iv.getValue() < 0){
-                for(int i=0; i < dimension; ++i){
-                    if(!data.containsKey(i)){
-                        iv.setValue(0);
-                        iv.setIndex(i);
-                        break;
-                    }
-                }
-            }
-        }
-
-        return iv;
-    }
-
     public int getDimension(){
         return dimension;
     }
@@ -172,7 +121,7 @@ public class Vector implements Serializable, Cloneable {
         for(int i = 0; i < vlist.size(); ++i)
         {
             Vector v = vlist.get(i);
-            double norm_a = v.multiply(v);
+            double norm_a = Math.sqrt(v.multiply(v));
 
             if (DoubleUtils.isZero(norm_a)) {
                 return new Vector(dimension);
@@ -190,7 +139,7 @@ public class Vector implements Serializable, Cloneable {
 
     public Vector projectAlong(Vector rhs)
     {
-        double norm_a = rhs.multiply(rhs);
+        double norm_a = Math.sqrt(rhs.multiply(rhs));
 
         if (DoubleUtils.isZero(norm_a)) {
             return new Vector(dimension);
