@@ -22,7 +22,6 @@ public class Matrix implements Serializable, Cloneable {
     private HashMap<Integer, Vector> rows = new HashMap<Integer, Vector>();
     private int rowCount;
     private int columnCount;
-    private double defaultValue;
 
     public Matrix(){
 
@@ -77,14 +76,6 @@ public class Matrix implements Serializable, Cloneable {
                 }
             }
 
-            if(defaultValue != rhs2.defaultValue){
-                for(int i=0; i < rowCount; ++i){
-                    if(!rows.containsKey(i)) {
-                        return false;
-                    }
-                }
-            }
-
             return true;
         }
 
@@ -101,8 +92,6 @@ public class Matrix implements Serializable, Cloneable {
     public void copy(Matrix rhs){
         rowCount = rhs.rowCount;
         columnCount = rhs.columnCount;
-        defaultValue = rhs.defaultValue;
-
         rows.clear();
 
         for(Map.Entry<Integer, Vector> entry : rows.entrySet()){
@@ -116,14 +105,6 @@ public class Matrix implements Serializable, Cloneable {
 
     public int getColumnCount() {
         return columnCount;
-    }
-
-    public double getDefaultValue(){
-        return defaultValue;
-    }
-
-    public void setDefaultValue(double defaultValue){
-        this.defaultValue = defaultValue;
     }
 
     public void set(int rowIndex, int columnIndex, double value){
@@ -140,26 +121,19 @@ public class Matrix implements Serializable, Cloneable {
     public Matrix(int rowCount, int columnCount){
         this.rowCount = rowCount;
         this.columnCount = columnCount;
-        this.defaultValue = 0;
     }
 
     public Vector getRow(int rowIndex){
         Vector row = rows.get(rowIndex);
         if(row == null){
             row = new Vector(columnCount);
-            row.setAll(defaultValue);
             row.setId(rowIndex);
             rows.put(rowIndex, row);
         }
         return row;
     }
 
-    public void setAll(double value){
-        defaultValue = value;
-        for(Vector row : rows.values()){
-            row.setAll(value);
-        }
-    }
+
 
     public double get(int rowIndex, int columnIndex) {
         Vector row=getRow(rowIndex);
@@ -177,7 +151,6 @@ public class Matrix implements Serializable, Cloneable {
         for (int c = 0; c < n; ++c)
         {
             Vector Acol = new Vector(rowCount);
-            Acol.setAll(defaultValue);
             Acol.setId(c);
 
             for (int r = 0; r < rowCount; ++r)
@@ -200,7 +173,6 @@ public class Matrix implements Serializable, Cloneable {
         Vector col2;
 
         Matrix result = new Matrix(getRowCount(), rhs.getColumnCount());
-        result.setAll(defaultValue);
 
         List<Vector> rhsColumns = rhs.columnVectors();
 

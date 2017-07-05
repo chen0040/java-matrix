@@ -13,7 +13,6 @@ import java.util.Set;
 public class Vector implements Serializable, Cloneable {
     private HashMap<Integer, Double> data = new HashMap<Integer, Double>();
     private int dimension;
-    private double defaultValue;
     private int id = -1;
 
     public Vector(){
@@ -28,12 +27,10 @@ public class Vector implements Serializable, Cloneable {
 
     public Vector(int dimension){
         this.dimension = dimension;
-        defaultValue = 0;
     }
 
     public Vector(int dimension, Map<Integer, Double> data){
         this.dimension = dimension;
-        defaultValue = 0;
 
         for(Map.Entry<Integer, Double> entry : data.entrySet()){
             set(entry.getKey(), entry.getValue());
@@ -48,7 +45,6 @@ public class Vector implements Serializable, Cloneable {
     }
 
     public void copy(Vector rhs){
-        defaultValue = rhs.defaultValue;
         dimension = rhs.dimension;
         id = rhs.id;
 
@@ -59,7 +55,10 @@ public class Vector implements Serializable, Cloneable {
     }
 
     public void set(int i, double value){
-        if(value == defaultValue) return;
+        if(DoubleUtils.isZero(value)){
+            data.remove(i);
+            return;
+        }
 
         data.put(i, value);
         if(i >= dimension){
@@ -76,7 +75,7 @@ public class Vector implements Serializable, Cloneable {
     }
 
     public double get(int i){
-        return data.getOrDefault(i, defaultValue);
+        return data.getOrDefault(i, 0.0);
     }
 
     @Override
@@ -98,25 +97,10 @@ public class Vector implements Serializable, Cloneable {
                 }
             }
 
-            if(defaultValue != rhs2.defaultValue){
-                for(int i=0; i < dimension; ++i){
-                    if(data.containsKey(i)){
-                        return false;
-                    }
-                }
-            }
-
             return true;
         }
 
         return false;
-    }
-
-    public void setAll(double value){
-        defaultValue = value;
-        for(Integer index : data.keySet()){
-            data.put(index, defaultValue);
-        }
     }
 
     public IndexValue indexWithMaxValue(Set<Integer> indices){
@@ -154,12 +138,12 @@ public class Vector implements Serializable, Cloneable {
         }
 
         if(!iv.hasValue()){
-            iv.setValue(defaultValue);
+            iv.setValue(0);
         } else{
-            if(iv.getValue() < defaultValue){
+            if(iv.getValue() < 0){
                 for(int i=0; i < dimension; ++i){
                     if(!data.containsKey(i)){
-                        iv.setValue(defaultValue);
+                        iv.setValue(0);
                         iv.setIndex(i);
                         break;
                     }
@@ -174,7 +158,6 @@ public class Vector implements Serializable, Cloneable {
         return dimension;
     }
 
-    public double getDefaultValue() { return defaultValue;}
 
     public HashMap<Integer, Double> getData(){
         return data;
@@ -233,14 +216,8 @@ public class Vector implements Serializable, Cloneable {
     public double multiply(Vector rhs)
     {
         double productSum = 0;
-        if(defaultValue == 0) {
-            for (Map.Entry<Integer, Double> entry : data.entrySet()) {
-                productSum += entry.getValue() * rhs.get(entry.getKey());
-            }
-        } else {
-            for(int i=0; i < dimension; ++i){
-                productSum += get(i) * rhs.get(i);
-            }
+        for (Map.Entry<Integer, Double> entry : data.entrySet()) {
+            productSum += entry.getValue() * rhs.get(entry.getKey());
         }
 
         return productSum;
@@ -296,7 +273,6 @@ public class Vector implements Serializable, Cloneable {
         for(Map.Entry<Integer, Double> entry : data.entrySet()){
             sum += entry.getValue();
         }
-        sum += defaultValue * (dimension - data.size());
 
         return sum;
     }
@@ -314,17 +290,11 @@ public class Vector implements Serializable, Cloneable {
             {
                 sum += Math.abs(val);
             }
-            if(!DoubleUtils.isZero(defaultValue)) {
-                sum += Math.abs(defaultValue) * (dimension - data.size());
-            }
             return sum;
         }
         else if (level == 2)
         {
             double sum = multiply(this);
-            if(!DoubleUtils.isZero(defaultValue)){
-                sum += (dimension - data.size()) * (defaultValue * defaultValue);
-            }
             return Math.sqrt(sum);
         }
         else
@@ -333,9 +303,6 @@ public class Vector implements Serializable, Cloneable {
             for (Double val : this.data.values())
             {
                 sum += Math.pow(Math.abs(val), level);
-            }
-            if(!DoubleUtils.isZero(defaultValue)) {
-                sum += Math.pow(Math.abs(defaultValue), level) * (dimension - data.size());
             }
             return Math.pow(sum, 1.0 / level);
         }
@@ -349,7 +316,6 @@ public class Vector implements Serializable, Cloneable {
             return new Vector(dimension);
         }
         Vector clone = new Vector(dimension);
-        clone.setAll(defaultValue / norm);
 
         for (Integer k : data.keySet())
         {
