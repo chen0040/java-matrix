@@ -199,12 +199,12 @@ public class Vector implements Serializable, Cloneable {
         int index;
         for (Map.Entry<Integer, Double> entry : data.entrySet()) {
             index = entry.getKey();
-            result.data.put(index, entry.getValue() - rhs.data.get(index));
+            result.data.put(index, entry.getValue() - rhs.get(index));
         }
         for(Map.Entry<Integer, Double> entry : rhs.data.entrySet()){
             index = entry.getKey();
             if(result.data.containsKey(index)) continue;
-            result.data.put(index, data.get(index) - entry.getValue());
+            result.data.put(index, this.get(index) - entry.getValue());
         }
 
         return result;
